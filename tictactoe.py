@@ -3,7 +3,7 @@ Implements a tic-tac-toe game with two players: a user and an AI
 Author: Anikuabe Nana Kweku
 """
 import random
-
+#let's get the ball on the roll!!!
 def welcome_text(board,gridX,gridY):
     welcome_text = 'Welcome to Tic-Tac-Toe!'
     print('*' * len(welcome_text))
