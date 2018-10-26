@@ -3,7 +3,7 @@ Implements a tic-tac-toe game with two players: a user and an AI
 Author: Anikuabe Nana Kweku
 """
 import random
-def welcome_text(board,gridX,gridY):
+def welcome_text(board,gridX,gridY): 
     welcome_text = 'Welcome to Tic-Tac-Toe!'
     print('*' * len(welcome_text))
     print(welcome_text)
@@ -76,15 +76,17 @@ def aiTurn(board,gridX,gridY):
         for move_index in range(len(best_move_board)):
             if best_move_board[move_index] == '0' and (move_index in empty_slot_list):
                 board[move_index] = '0'
+                print('AI chooses: ',move_index)
                 break
     else:
         """decides the AI's choice if a terminal state results in
         the AI losing
         """
         for move_index in range(len(best_move_board)):
-            if best_move_board[move_index] == 'X' and (move_index in empty_slot_list):
+            if (best_move_board[move_index] == 'X' or best_move_board[move_index] == ' ') and (move_index in empty_slot_list):
                 board[move_index] = '0'
-            break
+                print('AI chooses: ',move_index)
+                break
 
 def minimax(board,gridX,gridY):
     best_move_ai = {'move':'','score': 0}
@@ -131,6 +133,7 @@ def minimax(board,gridX,gridY):
 
     min_value(board,alpha,beta)
     max_value(board,alpha,beta)
+    print(best_move_ai['move'],best_move_ai['score'])
     return best_move_ai
 
 def userTurn(board):
