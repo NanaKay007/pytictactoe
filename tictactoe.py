@@ -67,6 +67,7 @@ def aiTurn(board,gridX,gridY):
 
     #isolates the moves board from the best_move object
     best_move_board = choice['move']
+        
 
     """decides the AI's choice if a terminal state results in
     the AI winning
@@ -79,6 +80,7 @@ def aiTurn(board,gridX,gridY):
                 print('AI chooses: ',move_index)
                 break
     else:
+
         """decides the AI's choice if a terminal state results in
         the AI losing
         """
@@ -92,16 +94,24 @@ def minimax(board,gridX,gridY):
     best_move_ai = {'move':'','score': 0}
     alpha = 0
     beta = 0
+
     def max_value(board,alpha,beta):
         #empty slots
         allowed_moves = emptySlotChecker(board)
         new_board = board.copy()
         aiplayer = '0'
-        if isWinner(new_board,aiplayer,gridX,gridY) == True:
+
+        ai_win = isWinner(board,aiplayer,gridX,gridY)
+        hum_win = isWinner(board,'X',gridX,gridY)
+
+        if ai_win['bool'] == True:
             best_move_ai['move'] = new_board
             best_move_ai['score'] = 10
             return best_move_ai['score']
-        total_score = -1000
+        elif (ai_win['bool']==False and hum_win['bool']==False):
+            total_score = 0
+        else:
+            total_score = -1000
         for a in allowed_moves:
             new_board_2 = new_board.copy()
             new_board_2[a] = aiplayer
@@ -116,11 +126,19 @@ def minimax(board,gridX,gridY):
         humplayer = 'X'
         new_board = board.copy()
         allowed_moves = emptySlotChecker(board)
-        if isWinner(new_board,humplayer,gridX,gridY) == True:
+
+        ai_win = isWinner(board,'0',gridX,gridY)
+        hum_win = isWinner(board,humplayer,gridX,gridY)
+
+        if isWinner(new_board,humplayer,gridX,gridY)['bool'] == True:
             best_move_ai['move'] = new_board
             best_move_ai['score'] = -10
             return best_move_ai['score']
-        total_score = 1000
+        elif (ai_win['bool']==False and hum_win['bool']==False):
+            total_score = 0
+            print('I was run!')
+        else:
+            total_score = 1000
         for a in allowed_moves:
             new_board_2 = new_board.copy()
             new_board_2[a] = humplayer
@@ -133,6 +151,7 @@ def minimax(board,gridX,gridY):
 
     min_value(board,alpha,beta)
     max_value(board,alpha,beta)
+
     print(best_move_ai['move'],best_move_ai['score'])
     return best_move_ai
 
@@ -160,6 +179,7 @@ def isWinner(board,symbol,gridX,gridY):
     parameters: board, symbol
     """
     isWinner_bool = False
+    isWinner_move = []
     for i in range(gridX):
         #checks columns for a winner
         col_indx = list(range(i,gridX*gridY,gridX))
@@ -169,6 +189,7 @@ def isWinner(board,symbol,gridX,gridY):
         win_count = slot_list.count(symbol)
         if win_count == gridY:
             isWinner_bool = True
+            isWinner_bool = col_indx
 
     #checks rows
     for i in range(0,gridX*gridY,gridX):
@@ -179,6 +200,7 @@ def isWinner(board,symbol,gridX,gridY):
         win_count = slot_list.count(symbol)
         if win_count == gridX:
             isWinner_bool = True
+            isWinner_move = col_indx
 
     #checks diagonals for a winner if the board is symmetric
     if gridX == gridY:
@@ -191,6 +213,7 @@ def isWinner(board,symbol,gridX,gridY):
         win_count = slot_list_1.count(symbol)
         if win_count == gridX:
             isWinner_bool = True
+            isWinner_move = col_indx
 
         #checks right diagonal
         diag_count_2 = gridY-1
@@ -201,8 +224,8 @@ def isWinner(board,symbol,gridX,gridY):
         win_count = slot_list_2.count(symbol)
         if win_count == gridX:
             isWinner_bool = True
-
-    return isWinner_bool
+            isWinner_move = col_indx
+    return {'bool': isWinner_bool,'move':isWinner_move}
 
 def main():
     user_gridX_choice = int(input('Please enter grid dimension X: '))
@@ -213,24 +236,23 @@ def main():
     welcome_text(sample_board,user_gridX_choice,user_gridY_choice)
 
     #main program
-    random.seed(2)
     board = list(" "*(user_gridX_choice*user_gridY_choice))
     isGameOver = False
     num_empty_slots = len(emptySlotChecker(board))
 
-    #testing new AI function
+
     while isGameOver == False:
         if num_empty_slots != 0:
             print()
             aiTurn(board,user_gridX_choice,user_gridY_choice)
             num_empty_slots -= 1
-            isGameOver = isWinner(board,'0',user_gridX_choice,user_gridY_choice)
+            isGameOver = isWinner(board,'0',user_gridX_choice,user_gridY_choice)['bool']
             displayBoard(board,user_gridX_choice,user_gridY_choice)
             if num_empty_slots != 0:
                 if isGameOver == False:
                     userTurn(board)
                     num_empty_slots -=1
-                    isGameOver = isWinner(board,'X',user_gridX_choice,user_gridY_choice)
+                    isGameOver = isWinner(board,'X',user_gridX_choice,user_gridY_choice)['bool']
                     displayBoard(board,user_gridX_choice,user_gridY_choice)
                     if isGameOver == True:
                         print('User Wins!')
