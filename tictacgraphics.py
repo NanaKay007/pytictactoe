@@ -1,61 +1,44 @@
 from graphics import *
 
-def displayboard(window,gridX,gridY):
+def displayboard(window,gridX,gridY,points_list):
     """
     Draws the square board based on user's choice
+    writes all square coordinates to a list
     parameters: window
     return: none
     """
     for i in range(gridX):
         for j in range(gridY):
             corner1 = Point(50*(j+1),50*(i+1))
-            corner2 = Point(100 + (50*(j)),100 + (50*(i)))
+            corner2 = Point(50 + (50*(j)),100 + (50*(i)))
+            points_list.append((corner1,corner2))
             square = Rectangle(corner1,corner2)
             square.draw(window)
 
-
-
-    # square.draw(window)
-    return 0
-
-def displayinput(window):
+def drawX(window):
     """
-    Displays the UI for entering a choice
-    parameters: window
-    return: input_text
+    draws an X (for the user) in the square board.
+    parameters : window 
     """
-    # text_input = Entry(Point(300,300),10)
-    text_str = Text(Point(300,400),"hello")
-    # text_input.draw(window)
-    # text_str.draw(window)
-    #
-    # choice = text_input.getText() #extracts input text
-    # window.getMouse()
-    # text_str.setText(choice)
-    # text_str.draw(window)
 
-    checkPoint = window.checkMouse()
-    while checkPoint != None:
-        
-        checkPoint.draw(window)
-    else:
-        text_str.draw(window)
-    return 0
+
 
 
 def main():
     user_gridX_choice = int(input('Please enter grid dimension X: '))
     user_gridY_choice = int(input('Please enter grid dimesion Y: '))
+    
     #constructs the window
-    window = GraphWin("Welcome To TicTacToe!",600,600)
+    x = 1000
+    y = 800
+    window = GraphWin("Welcome To TicTacToe!",x,y)
+    window.setBackground('white')
+
     #constructs the board and the input UI
-    displayboard(window,user_gridX_choice,user_gridY_choice)
-    displayinput(window)
+    points_list = []
+    displayboard(window,user_gridX_choice,user_gridY_choice,points_list)
+    print(points_list)
     window.getMouse()
     window.close()
-
-
-
-
 
 main()
