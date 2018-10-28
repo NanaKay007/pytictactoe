@@ -1,1 +1,2 @@
 # pytictactoe
+Hi there! This is a tictactoe game I wrote myself. It has an AI component (which is a little smart and definitely does not make its choices by choosing randomly!). To run the code, you will need python installed and also have Zelle graphics placed in a directory where python can see it. I consider myself as a beginner in coding who just can't resist anything related to AI (that was why I tried creating this in the first place). There's definitely a lot of bugs in my code, but I am continually working on it,honestly!. 
