@@ -16,36 +16,44 @@ def welcome_text(board,gridX,gridY):
     displayBoard(board,gridX,gridY)
     print()
 
-def displayBoard(board,gridX,gridY):
-    print('-' * gridX)
-    accum = '|'
-    #checks the length each number should have
-    max_int = str(len(board))
-    max_length = 0
-    for i in max_int:
-        max_length+=1
+def displayBoard(board,window,gridX,gridY,points_list):
+    # print('-' * gridX)
+    # accum = '|'
+    # #checks the length each number should have
+    # max_int = str(len(board))
+    # max_length = 0
+    # for i in max_int:
+    #     max_length+=1
 
-    #formats each number to be uniform and have the pipe character
-    slot_list = []
-    space = ' '
-    pipe = '|'
-    for i in board:
-        num = str(i)
-        if len(num) < max_length:
-            new_numstr = num + (space * (max_length - len(num))+ pipe)
-            slot_list.append(new_numstr)
-        else:
-            slot_list.append(num+pipe)
+    # #formats each number to be uniform and have the pipe character
+    # slot_list = []
+    # space = ' '
+    # pipe = '|'
+    # for i in board:
+    #     num = str(i)
+    #     if len(num) < max_length:
+    #         new_numstr = num + (space * (max_length - len(num))+ pipe)
+    #         slot_list.append(new_numstr)
+    #     else:
+    #         slot_list.append(num+pipe)
 
-    #prints the rows of the sample board
-    for i in range(0,len(board),gridX):
-        row = slot_list[i:i+gridX]
-        board_row = '|'
-        for i in row:
-            board_row += i
-        print(board_row)
+    # #prints the rows of the sample board
+    # for i in range(0,len(board),gridX):
+    #     row = slot_list[i:i+gridX]
+    #     board_row = '|'
+    #     for i in row:
+    #         board_row += i
+    #     print(board_row)
 
-    print('-'*gridX)
+    # print('-'*gridX)
+
+    for i in range(gridX):
+        for j in range(gridY):
+            corner1 = Point(50+(50*j),100+(50*i))
+            corner2 = Point(100+(50*(j)),150+(50*(i)))
+            points_list.append((corner1,corner2))
+            square = Rectangle(corner1,corner2)
+            square.draw(window)
 
 def emptySlotChecker(board):
     """
@@ -60,7 +68,7 @@ def emptySlotChecker(board):
             empty_slots.append(i)
     return empty_slots
 
-def aiTurn(board,gridX,gridY):
+def aiTurn(board,window,gridX,gridY,points_list):
     #keeps track of the empty slots in the board
     empty_slot_list = emptySlotChecker(board)
 
@@ -78,6 +86,8 @@ def aiTurn(board,gridX,gridY):
         for move_index in range(len(best_move_board)):
             if best_move_board[move_index] == '0' and (move_index in empty_slot_list):
                 board[move_index] = '0'
+                print('AI chooses: ',move_index)
+                drawAiChoice(board,window,move_index,points_list)
                 break
     elif len(choice['move']) != 0 and choice['score'] == -10:
         """decides the AI's choice if a terminal state results in
@@ -86,7 +96,28 @@ def aiTurn(board,gridX,gridY):
         for move_index in range(len(best_move_board)):
             if best_move_board[move_index] == 'X' and (move_index in empty_slot_list):
                 board[move_index] = '0'
+                print('AI chooses: ',move_index)
+                drawAiChoice(board,window,move_index,points_list)
                 break
+
+def drawAiChoice(board,window,ai_choice,points_list):
+    """
+    draws the symbol '0' for the AI
+    parameters: board,window
+    """
+    square_coords = points_list[ai_choice]
+
+    x_1 = square_coords[0].getX()
+    y_1 = square_coords[0].getY()
+
+    x_2 = square_coords[1].getX()
+    y_2 = square_coords[1].getY()
+
+    anchor_x = (x_1 + x_2)/2
+    anchor_y = (y_1 + y_2)/2
+
+    O = Text(Point(anchor_x,anchor_y),'0')
+    O.draw(window)
 
 def minimax(board,gridX,gridY):
     best_move_ai = {'move':'','score': 0}
@@ -136,22 +167,49 @@ def minimax(board,gridX,gridY):
     print(best_move_ai)
     return best_move_ai
 
-def userTurn(board):
+def getUserChoice(window,points_list,board,quit):
     """
-    allows user to input a choice and checks wether the choice
-    is valid.
-    parameter: board
+    draws an X (for the user) in the square board or closes game
+    parameters : window
     """
-    #keeps track of empty slots in the board
-    empty_slot_list = emptySlotChecker(board)
+    #user click Point
+    clickPoint = window.getMouse()
+    x = clickPoint.getX()
+    y = clickPoint.getY()
 
-    #asks and checks that the user input is valid and not taken
-    user_choice = int(input('Enter 0-8 for your choice: '))
-    while not(user_choice in empty_slot_list):
-        print("Invalid input: %s" % user_choice)
-        user_choice = int(input('Enter 0-8 for your choice: '))
-    else:
-        board[user_choice] = 'X'
+    #quit button anchor points
+    corner_1 = quit.getP1()
+    corner_2 = quit.getP2()
+
+    cx_1 = corner_1.getX()
+    cy_1 = corner_1.getY()
+
+    cx_2 = corner_2.getX()
+    cy_2 = corner_2.getY()
+
+    for (point1,point2) in points_list:
+        #keeps the index of a point object
+        point_index = points_list.index((point1,point2))
+        x_1 = point1.getX()
+        y_1 = point1.getY()
+
+        x_2 = point2.getX()
+        y_2 = point2.getY()
+
+        #checks wether the coordinates of a clickpoint exists within the confines of a square
+        #if the square is empty, it draws an X and updates the board object
+        if (x > x_1 and x < x_2 and y > y_1 and y < y_2 ) and board[point_index] == ' ':
+            anchor_x = (x_1 + x_2)/2
+            anchor_y = (y_1 + y_2)/2
+            X = Text(Point(anchor_x,anchor_y),'X')
+            X.draw(window)
+            board[point_index] = 'X'
+            return False
+        #condition to check when the user clicks an occupied point
+        elif (x > x_1 and x < x_2 and y > y_1 and y < y_2 ) and board[point_index] != ' ':
+            print('invalid input')
+        elif (x < cx_2 and x > cx_1) and (y < cy_2 and y > cy_1):
+            window.close()
 
 def isWinner(board,symbol,gridX,gridY):
     """
@@ -209,28 +267,56 @@ def main():
     user_gridY_choice = int(input('Please enter grid dimesion Y: '))
 
     #welcome section
-    sample_board = list(range(user_gridX_choice * user_gridY_choice))
-    welcome_text(sample_board,user_gridX_choice,user_gridY_choice)
+    # sample_board = list(range(user_gridX_choice * user_gridY_choice))
+    # welcome_text(sample_board,user_gridX_choice,user_gridY_choice)
 
     #main program
     board = list(" "*(user_gridX_choice*user_gridY_choice))
     isGameOver = False
     num_empty_slots = len(emptySlotChecker(board))
+    points_list = []
 
-    #testing new AI function
+    #constructs the window
+    square_length = 50
+
+    board_width = square_length * user_gridX_choice
+    board_height = square_length * user_gridY_choice
+
+    window_x = 50 + board_width + 50
+    window_y = 100 + board_height + 150
+
+    window = GraphWin("Welcome To TicTacToe!",window_x,window_y)
+    window.setBackground('white')
+
+    #draws the header
+    anchor_point = Point(window_x/2,50)
+    header = Text(anchor_point,'Welcome to Tic-Tac-Smart!')
+    header.draw(window)
+    
+    #draws the quit button
+    quit_center = Point(window_x/2,window_y-50)
+    quit_button_text = Text(quit_center,'Quit')
+    quit_box_corner_1 = Point(quit_center.getX()-20,quit_center.getY()-20)
+    quit_box_corner_2 = Point(quit_center.getX()+20,quit_center.getY()+20)
+    quit_button_border = Rectangle(quit_box_corner_1,quit_box_corner_2)
+    quit_button_border.draw(window)
+    quit_button_text.draw(window)
+
+    displayBoard(board,window,user_gridX_choice,user_gridY_choice,points_list)
     while isGameOver == False:
         if num_empty_slots != 0:
             print()
-            aiTurn(board,user_gridX_choice,user_gridY_choice)
+            aiTurn(board,window,user_gridX_choice,user_gridY_choice,points_list)
             num_empty_slots -= 1
             isGameOver = isWinner(board,'0',user_gridX_choice,user_gridY_choice)
-            displayBoard(board,user_gridX_choice,user_gridY_choice)
+            # displayBoard(board,window,user_gridX_choice,user_gridY_choice,points_list)
             if num_empty_slots != 0:
                 if isGameOver == False:
-                    userTurn(board)
+                    # userTurn(board)
+                    isGameOver = getUserChoice(window,points_list,board,quit_button_border)
                     num_empty_slots -=1
                     isGameOver = isWinner(board,'X',user_gridX_choice,user_gridY_choice)
-                    displayBoard(board,user_gridX_choice,user_gridY_choice)
+                    # displayBoard(board,user_gridX_choice,user_gridY_choice)
                     if isGameOver == True:
                         print('User Wins!')
                 else:
@@ -243,4 +329,8 @@ def main():
         if num_empty_slots == 0:
             print('It\'s a draw')
         print('Game Over')
+    
+    window.getMouse()
+    window.close()
+
 main()

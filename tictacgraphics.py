@@ -42,8 +42,6 @@ def drawAiChoice(board,window,ai_choice,points_list):
     O = Text(Point(anchor_x,anchor_y),'0')
     O.draw(window)
 
-    return 0
-
 def getUserChoice(window,points_list,board,quit):
     """
     draws an X (for the user) in the square board or closes game
@@ -111,7 +109,7 @@ def main():
     anchor_point = Point(window_x/2,50)
     header = Text(anchor_point,'Welcome to Tic-Tac-Smart!')
     header.draw(window)
-    
+
     #draws the quit button
     quit_center = Point(window_x/2,window_y-50)
     quit_button_text = Text(quit_center,'Quit')
