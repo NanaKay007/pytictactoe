@@ -18,10 +18,6 @@ def displayboard(board,window,gridX,gridY,points_list):
             square = Rectangle(corner1,corner2)
             square.draw(window)
 
-    #maps each square to a slot on the board
-    # for i in range(len(board)):
-    #     map_dict[i] = points_list[i]
-
 def drawAiChoice(board,window,ai_choice,points_list):
     """
     draws the symbol '0' for the AI

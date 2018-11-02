@@ -17,35 +17,13 @@ def welcome_text(board,gridX,gridY):
     print()
 
 def displayBoard(board,window,gridX,gridY,points_list):
-    # print('-' * gridX)
-    # accum = '|'
-    # #checks the length each number should have
-    # max_int = str(len(board))
-    # max_length = 0
-    # for i in max_int:
-    #     max_length+=1
-
-    # #formats each number to be uniform and have the pipe character
-    # slot_list = []
-    # space = ' '
-    # pipe = '|'
-    # for i in board:
-    #     num = str(i)
-    #     if len(num) < max_length:
-    #         new_numstr = num + (space * (max_length - len(num))+ pipe)
-    #         slot_list.append(new_numstr)
-    #     else:
-    #         slot_list.append(num+pipe)
-
-    # #prints the rows of the sample board
-    # for i in range(0,len(board),gridX):
-    #     row = slot_list[i:i+gridX]
-    #     board_row = '|'
-    #     for i in row:
-    #         board_row += i
-    #     print(board_row)
-
-    # print('-'*gridX)
+    """
+    Draws the square board based on user's choice
+    writes all square coordinates to a list
+    parameters: window
+    return: none
+    """
+    #draws the square board
 
     for i in range(gridX):
         for j in range(gridY):
@@ -99,6 +77,10 @@ def aiTurn(board,window,gridX,gridY,points_list):
                 print('AI chooses: ',move_index)
                 drawAiChoice(board,window,move_index,points_list)
                 break
+    else:
+        move_index = random.choice(empty_slot_list)
+        board[move_index] = '0'
+        drawAiChoice(board,window,move_index,points_list)
 
 def drawAiChoice(board,window,ai_choice,points_list):
     """
