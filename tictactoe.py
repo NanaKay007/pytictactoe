@@ -5,16 +5,16 @@ Author: Anikuabe Nana Kweku
 import random
 from graphics import *
 
-def welcome_text(board,gridX,gridY):
-    welcome_text = 'Welcome to Tic-Tac-Toe!'
-    print('*' * len(welcome_text))
-    print(welcome_text)
-    print('*' * len(welcome_text))
-    print()
-    print('Enter your choice like the numbers below:')
-    print()
-    displayBoard(board,gridX,gridY)
-    print()
+# def welcome_text(board,gridX,gridY):
+#     welcome_text = 'Welcome to Tic-Tac-Toe!'
+#     print('*' * len(welcome_text))
+#     print(welcome_text)
+#     print('*' * len(welcome_text))
+#     print()
+#     print('Enter your choice like the numbers below:')
+#     print()
+#     displayBoard(board,gridX,gridY)
+#     print()
 
 def displayBoard(board,window,gridX,gridY,points_list):
     """
@@ -64,7 +64,6 @@ def aiTurn(board,window,gridX,gridY,points_list):
         for move_index in range(len(best_move_board)):
             if best_move_board[move_index] == '0' and (move_index in empty_slot_list):
                 board[move_index] = '0'
-                print('AI chooses: ',move_index)
                 drawAiChoice(board,window,move_index,points_list)
                 break
     elif len(choice['move']) != 0 and choice['score'] == -10:
@@ -74,7 +73,6 @@ def aiTurn(board,window,gridX,gridY,points_list):
         for move_index in range(len(best_move_board)):
             if best_move_board[move_index] == 'X' and (move_index in empty_slot_list):
                 board[move_index] = '0'
-                print('AI chooses: ',move_index)
                 drawAiChoice(board,window,move_index,points_list)
                 break
     else:
@@ -146,7 +144,6 @@ def minimax(board,gridX,gridY):
 
     min_value(board,alpha,beta)
     max_value(board,alpha,beta)
-    print(best_move_ai)
     return best_move_ai
 
 def getUserChoice(window,points_list,board,quit):
@@ -248,10 +245,6 @@ def main():
     user_gridX_choice = int(input('Please enter grid dimension X: '))
     user_gridY_choice = int(input('Please enter grid dimesion Y: '))
 
-    #welcome section
-    # sample_board = list(range(user_gridX_choice * user_gridY_choice))
-    # welcome_text(sample_board,user_gridX_choice,user_gridY_choice)
-
     #main program
     board = list(" "*(user_gridX_choice*user_gridY_choice))
     isGameOver = False
@@ -287,18 +280,14 @@ def main():
     displayBoard(board,window,user_gridX_choice,user_gridY_choice,points_list)
     while isGameOver == False:
         if num_empty_slots != 0:
-            print()
             aiTurn(board,window,user_gridX_choice,user_gridY_choice,points_list)
             num_empty_slots -= 1
             isGameOver = isWinner(board,'0',user_gridX_choice,user_gridY_choice)
-            # displayBoard(board,window,user_gridX_choice,user_gridY_choice,points_list)
             if num_empty_slots != 0:
                 if isGameOver == False:
-                    # userTurn(board)
                     isGameOver = getUserChoice(window,points_list,board,quit_button_border)
                     num_empty_slots -=1
                     isGameOver = isWinner(board,'X',user_gridX_choice,user_gridY_choice)
-                    # displayBoard(board,user_gridX_choice,user_gridY_choice)
                     if isGameOver == True:
                         print('User Wins!')
                 else:
