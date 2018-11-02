@@ -3,6 +3,7 @@ Implements a tic-tac-toe game with two players: a user and an AI
 Author: Anikuabe Nana Kweku
 """
 import random
+from graphics import *
 
 def welcome_text(board,gridX,gridY):
     welcome_text = 'Welcome to Tic-Tac-Toe!'
@@ -72,20 +73,20 @@ def aiTurn(board,gridX,gridY):
     """decides the AI's choice if a terminal state results in
     the AI winning
     """
-    if choice['score'] == 10:
+    if len(choice['move']) != 0 and (choice['score'] == 10 or choice['score'] == 0):
         #loops through the indices in the moves_board
         for move_index in range(len(best_move_board)):
             if best_move_board[move_index] == '0' and (move_index in empty_slot_list):
                 board[move_index] = '0'
                 break
-    else:
+    elif len(choice['move']) != 0 and choice['score'] == -10:
         """decides the AI's choice if a terminal state results in
         the AI losing
         """
         for move_index in range(len(best_move_board)):
             if best_move_board[move_index] == 'X' and (move_index in empty_slot_list):
                 board[move_index] = '0'
-            break
+                break
 
 def minimax(board,gridX,gridY):
     best_move_ai = {'move':'','score': 0}
@@ -132,6 +133,7 @@ def minimax(board,gridX,gridY):
 
     min_value(board,alpha,beta)
     max_value(board,alpha,beta)
+    print(best_move_ai)
     return best_move_ai
 
 def userTurn(board):
@@ -211,7 +213,6 @@ def main():
     welcome_text(sample_board,user_gridX_choice,user_gridY_choice)
 
     #main program
-    random.seed(2)
     board = list(" "*(user_gridX_choice*user_gridY_choice))
     isGameOver = False
     num_empty_slots = len(emptySlotChecker(board))

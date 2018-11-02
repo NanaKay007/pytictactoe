@@ -1,6 +1,7 @@
 from graphics import *
 from random import choice
 
+
 def displayboard(board,window,gridX,gridY,points_list):
     """
     Draws the square board based on user's choice
@@ -18,8 +19,8 @@ def displayboard(board,window,gridX,gridY,points_list):
             square.draw(window)
 
     #maps each square to a slot on the board
-    for i in range(len(board)):
-        map_dict[i] = points_list[i]
+    # for i in range(len(board)):
+    #     map_dict[i] = points_list[i]
 
 def drawAiChoice(board,window,ai_choice,points_list):
     """
@@ -81,8 +82,9 @@ def main():
     points_list = []
 
     #constructs the window
-    x = 1000
-    y = 800
+
+    x = 250
+    y = 350
     window = GraphWin("Welcome To TicTacToe!",x,y)
     window.setBackground('white')
 
