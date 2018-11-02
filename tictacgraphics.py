@@ -107,6 +107,11 @@ def main():
     window = GraphWin("Welcome To TicTacToe!",window_x,window_y)
     window.setBackground('white')
 
+    #draws the header
+    anchor_point = Point(window_x/2,50)
+    header = Text(anchor_point,'Welcome to Tic-Tac-Smart!')
+    header.draw(window)
+    
     #draws the quit button
     quit_center = Point(window_x/2,window_y-50)
     quit_button_text = Text(quit_center,'Quit')
