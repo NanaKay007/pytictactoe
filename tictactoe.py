@@ -5,17 +5,6 @@ Author: Anikuabe Nana Kweku
 import random
 from graphics import *
 
-# def welcome_text(board,gridX,gridY):
-#     welcome_text = 'Welcome to Tic-Tac-Toe!'
-#     print('*' * len(welcome_text))
-#     print(welcome_text)
-#     print('*' * len(welcome_text))
-#     print()
-#     print('Enter your choice like the numbers below:')
-#     print()
-#     displayBoard(board,gridX,gridY)
-#     print()
-
 def displayBoard(board,window,gridX,gridY,points_list):
     """
     Draws the square board based on user's choice
@@ -25,8 +14,8 @@ def displayBoard(board,window,gridX,gridY,points_list):
     """
     #draws the square board
 
-    for i in range(gridX):
-        for j in range(gridY):
+    for i in range(gridY):
+        for j in range(gridX):
             corner1 = Point(50+(50*j),100+(50*i))
             corner2 = Point(100+(50*(j)),150+(50*(i)))
             points_list.append((corner1,corner2))
@@ -61,20 +50,18 @@ def aiTurn(board,window,gridX,gridY,points_list):
     """
     if len(choice['move']) != 0 and (choice['score'] == 10 or choice['score'] == 0):
         #loops through the indices in the moves_board
-        for move_index in range(len(best_move_board)):
-            if best_move_board[move_index] == '0' and (move_index in empty_slot_list):
-                board[move_index] = '0'
-                drawAiChoice(board,window,move_index,points_list)
-                break
+        if best_move_board[0] in empty_slot_list:
+            board[best_move_board[0]] = '0'
+            drawAiChoice(board,window,best_move_board[0],points_list)
+
     elif len(choice['move']) != 0 and choice['score'] == -10:
         """decides the AI's choice if a terminal state results in
         the AI losing
         """
-        for move_index in range(len(best_move_board)):
-            if best_move_board[move_index] == 'X' and (move_index in empty_slot_list):
-                board[move_index] = '0'
-                drawAiChoice(board,window,move_index,points_list)
-                break
+        if best_move_board[0] in empty_slot_list:
+            board[best_move_board[0]] = '0'
+            drawAiChoice(board,window,best_move_board[0],points_list)
+
     else:
         move_index = random.choice(empty_slot_list)
         board[move_index] = '0'
@@ -103,47 +90,89 @@ def minimax(board,gridX,gridY):
     best_move_ai = {'move':'','score': 0}
     alpha = 0
     beta = 0
-    def max_value(board,alpha,beta):
+    limit = 20
+
+    def max_value(board,alpha,beta,limit):
         #empty slots
         allowed_moves = emptySlotChecker(board)
-        new_board = board.copy()
         aiplayer = '0'
-        if isWinner(new_board,aiplayer,gridX,gridY) == True:
-            best_move_ai['move'] = new_board
+        humplayer = 'X'
+        ai_win_check = isWinner(board,aiplayer,gridX,gridY)
+        human_win_check = isWinner(board,humplayer,gridX,gridY)
+        if  ai_win_check[1]== True:
+            best_move_ai['move'] = ai_win_check[0].copy()
             best_move_ai['score'] = 10
             return best_move_ai['score']
-        total_score = -1000
+        elif human_win_check[1] == True:
+            best_move_ai['move'] = human_win_check[0].copy()
+            best_move_ai['score'] = -10
+            return best_move_ai['score']
+        # elif len(allowed_moves) == 0:
+        #     best_move_ai['move'] = board.copy()
+        #     best_move_ai['score'] = 0
+        #     return best_move_ai['score']
+        total_score = -10
         for a in allowed_moves:
-            new_board_2 = new_board.copy()
-            new_board_2[a] = aiplayer
-            new_score = max(total_score,min_value(new_board_2,alpha,beta))
-            total_score = new_score
+            # new_board_2 = new_board.copy()
+            # print('a is ',a)
+            board[a] = aiplayer
+            # print('board is now',board)
+            if limit > 0:
+                print('limit is ',limit)
+                new_score = max(total_score,min_value(board,alpha,beta,limit))
+                total_score = new_score
+                board[a] = ' '
+                limit -= 1
             if total_score >= beta:
                 return total_score
             alpha = max(alpha,total_score)
         return total_score
 
-    def min_value(board,alpha,beta):
+    def min_value(board,alpha,beta,limit):
         humplayer = 'X'
-        new_board = board.copy()
+        aiplayer = '0'
+        ai_win_check = isWinner(board,aiplayer,gridX,gridY)
+        human_win_check = isWinner(board,humplayer,gridX,gridY)
+
+        # print("in min ...")
+        # print('board is ',board)
+        # new_board = board.copy()
         allowed_moves = emptySlotChecker(board)
-        if isWinner(new_board,humplayer,gridX,gridY) == True:
-            best_move_ai['move'] = new_board
+        if human_win_check[1] == True:
+            best_move_ai['move'] = human_win_check[0].copy()
             best_move_ai['score'] = -10
+            return best_move_ai[1]
+        elif ai_win_check[1] == True:
+            best_move_ai['move'] = ai_win_check[0].copy()
+            best_move_ai['score'] = 10
             return best_move_ai['score']
-        total_score = 1000
+        # elif len(allowed_moves) == 0:
+        #     best_move_ai['move'] = board.copy()
+        #     best_move_ai['score'] = 0
+        #     return best_move_ai['score']
+        total_score = 10
         for a in allowed_moves:
-            new_board_2 = new_board.copy()
-            new_board_2[a] = humplayer
-            new_score = min(total_score,max_value(new_board_2,alpha,beta))
-            total_score = new_score
+            # new_board_2 = new_board.copy()
+            # print('applying a: ',a)
+
+            board[a] = humplayer
+            # print("board is now: ",board)
+            if limit > 0:
+                print('limit is ',limit)
+                new_score = min(total_score,max_value(board,alpha,beta,limit))
+                total_score = new_score
+                board[a] = ' '
+                limit -=1
             if total_score<= alpha:
                 return total_score
             beta = min(beta,total_score)
         return total_score
 
-    min_value(board,alpha,beta)
-    max_value(board,alpha,beta)
+    # print('before' ,board)
+    # min_value(board,alpha,beta)
+    max_value(board,alpha,beta,limit)
+    # print('board after: ',board)
+    print(best_move_ai)
     return best_move_ai
 
 def getUserChoice(window,points_list,board,quit):
@@ -196,7 +225,8 @@ def isWinner(board,symbol,gridX,gridY):
     ends game if there are no slots
     parameters: board, symbol
     """
-    isWinner_bool = False
+    winning_set = [[],False]
+
     for i in range(gridX):
         #checks columns for a winner
         col_indx = list(range(i,gridX*gridY,gridX))
@@ -205,8 +235,9 @@ def isWinner(board,symbol,gridX,gridY):
             slot_list.append(board[i])
         win_count = slot_list.count(symbol)
         if win_count == gridY:
-            isWinner_bool = True
-
+            winning_set[1] = True
+            for i in col_indx:
+                winning_set[0].append(i)
     #checks rows
     for i in range(0,gridX*gridY,gridX):
         row_indx = list(range(i,i+gridX))
@@ -215,31 +246,40 @@ def isWinner(board,symbol,gridX,gridY):
             slot_list.append(board[i])
         win_count = slot_list.count(symbol)
         if win_count == gridX:
-            isWinner_bool = True
+            winning_set[1] = True
+            for i in row_indx:
+                winning_set[0].append(i)
+
 
     #checks diagonals for a winner if the board is symmetric
     if gridX == gridY:
         #checks left diagonal
         diag_count_1 = 0
         slot_list_1 = []
-        for i in range(0,gridX*gridY,gridX):
+        diag_indx = list(range(0,gridX*gridY,gridX))
+        for i in diag_indx:
             slot_list_1.append(board[i+diag_count_1])
             diag_count_1 += 1
         win_count = slot_list_1.count(symbol)
         if win_count == gridX:
-            isWinner_bool = True
+            winning_set[1] = True
+            for i in diag_indx:
+                winning_set[0].append(i)
+
 
         #checks right diagonal
         diag_count_2 = gridY-1
         slot_list_2 = []
-        for i in range(0,gridX*gridY,gridX):
+        diag_indx_2 = list(range(0,gridX*gridY,gridX))
+        for i in diag_indx_2:
             slot_list_2.append(board[i+diag_count_2])
             diag_count_2 -= 1
         win_count = slot_list_2.count(symbol)
         if win_count == gridX:
-            isWinner_bool = True
-
-    return isWinner_bool
+            winning_set[1] = True
+            for i in diag_indx:
+                winning_set[0].append(i)
+    return winning_set
 
 def main():
     user_gridX_choice = int(input('Please enter grid dimension X: '))
@@ -267,7 +307,7 @@ def main():
     anchor_point = Point(window_x/2,50)
     header = Text(anchor_point,'Welcome to Tic-Tac-Smart!')
     header.draw(window)
-    
+
     #draws the quit button
     quit_center = Point(window_x/2,window_y-50)
     quit_button_text = Text(quit_center,'Quit')
@@ -282,12 +322,14 @@ def main():
         if num_empty_slots != 0:
             aiTurn(board,window,user_gridX_choice,user_gridY_choice,points_list)
             num_empty_slots -= 1
-            isGameOver = isWinner(board,'0',user_gridX_choice,user_gridY_choice)
+            ai_check = isWinner(board,'0',user_gridX_choice,user_gridY_choice)
+            isGameOver = ai_check[1]
             if num_empty_slots != 0:
                 if isGameOver == False:
                     isGameOver = getUserChoice(window,points_list,board,quit_button_border)
                     num_empty_slots -=1
-                    isGameOver = isWinner(board,'X',user_gridX_choice,user_gridY_choice)
+                    user_check = isWinner(board,'X',user_gridX_choice,user_gridY_choice)
+                    isGameOver = user_check[1]
                     if isGameOver == True:
                         print('User Wins!')
                 else:
@@ -300,7 +342,7 @@ def main():
         if num_empty_slots == 0:
             print('It\'s a draw')
         print('Game Over')
-    
+
     window.getMouse()
     window.close()
 
