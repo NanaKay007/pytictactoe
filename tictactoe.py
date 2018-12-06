@@ -12,7 +12,6 @@ from getuserchoice import getUserChoice
 from checkwinner import isWinner
 from emptyslotchecker import emptySlotChecker
 
-
 def main():
     user_gridX_choice = int(input('Please enter grid dimension X: '))
     user_gridY_choice = int(input('Please enter grid dimesion Y: '))
