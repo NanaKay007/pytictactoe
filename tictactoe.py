@@ -38,13 +38,9 @@ def main():
     header = Text(anchor_point,'Welcome to Tic-Tac-Smart!')
     header.draw(window)
 
-    #draws the quit button
+    #draws the quit
     quit_center = Point(window_x/2,window_y-50)
-    quit_button_text = Text(quit_center,'Quit')
-    quit_box_corner_1 = Point(quit_center.getX()-20,quit_center.getY()-20)
-    quit_box_corner_2 = Point(quit_center.getX()+20,quit_center.getY()+20)
-    quit_button_border = Rectangle(quit_box_corner_1,quit_box_corner_2)
-    quit_button_border.draw(window)
+    quit_button_text = Text(quit_center,'press q to quit')
     quit_button_text.draw(window)
 
     displayBoard(board,window,user_gridX_choice,user_gridY_choice,points_list)
@@ -56,7 +52,7 @@ def main():
             isGameOver = ai_check[1]
             if num_empty_slots != 0:
                 if isGameOver == False:
-                    isGameOver = getUserChoice(window,points_list,board,quit_button_border)
+                    isGameOver = getUserChoice(window,points_list,board)
                     num_empty_slots -=1
                     user_check = isWinner(board,'X',user_gridX_choice,user_gridY_choice)
                     isGameOver = user_check[1]
