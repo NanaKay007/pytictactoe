@@ -5,6 +5,11 @@ from minimax import minimax
 from drawaichoice import drawAiChoice
 import random
 
+"""
+to do:
+refactor aiTurn function to work well with a new format for moves
+e.g {['x','0',[10 or -10 or 0]]}
+"""
 def aiTurn(board,window,gridX,gridY,points_list):
     #keeps track of the empty slots in the board
     empty_slot_list = emptySlotChecker(board)
